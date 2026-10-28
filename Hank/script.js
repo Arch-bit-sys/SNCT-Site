@@ -1,4 +1,4 @@
-const API = "http://192.168.1.236:3000";
+const API = "https://snct-site.onrender.com";
 
 const botao = document.getElementById("carregar");
 const tabela = document.getElementById("jogadores");
