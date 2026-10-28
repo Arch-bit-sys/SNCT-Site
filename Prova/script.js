@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "https://snct-site.onrender.com";
 
 // Elementos da página
 const nomeForm = document.querySelector("#nome-form");
