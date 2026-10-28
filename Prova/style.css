@@ -1,0 +1,92 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  background: #0b1020;
+  color: #edf1ff;
+  font-family: system-ui, sans-serif;
+}
+
+.container {
+  width: min(720px, 100%);
+  margin: 0 auto;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+form, #etapa-prova, #conclusao {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+label, legend {
+  font-weight: 600;
+}
+
+input, select, button {
+  width: 100%;
+  border: 1px solid #3b4668;
+  border-radius: 8px;
+  padding: 12px;
+  font: inherit;
+}
+
+input, select {
+  background: #11182d;
+  color: #edf1ff;
+}
+
+button {
+  border: 0;
+  background: #6474c8;
+  color: #080d20;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+fieldset {
+  margin: 20px 0 0;
+  padding: 16px;
+  border: 1px solid #3b4668;
+  border-radius: 8px;
+}
+
+.alternativa {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 12px 0;
+  font-weight: 400;
+}
+
+.alternativa input {
+  width: auto;
+  margin-top: 5px;
+}
+
+#status {
+  min-height: 1.5em;
+}
+
+#status.error {
+  color: #ff9aa9;
+}
+
+#status.info {
+  color: #c3ccff;
+}
+
+[hidden] {
+  display: none !important;
+}

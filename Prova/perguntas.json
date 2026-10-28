@@ -1,0 +1,60 @@
+{
+  "1": [
+    {
+      "pergunta": "Uma pesquisadora organizou 24 documentos em 3 grupos iguais. Quantos documentos ficaram em cada grupo?",
+      "opcoes": [
+        "6",
+        "8",
+        "9",
+        "12"
+      ]
+    },
+    {
+      "pergunta": "Uma pista informa que x / 4 = 5. Qual é o valor de x?",
+      "opcoes": [
+        "9",
+        "15",
+        "20",
+        "25"
+      ]
+    },
+    {
+      "pergunta": "Um código é formado por 3 algarismos diferentes escolhidos entre 1, 2 e 3. Quantos códigos podem ser formados usando os três algarismos uma vez cada?",
+      "opcoes": [
+        "3",
+        "4",
+        "6",
+        "9"
+      ]
+    }
+  ],
+  "2": [
+    {
+      "pergunta": "Uma equipe encontrou 36 páginas de anotações e precisa dividi-las igualmente entre 4 investigadores. Quantas páginas cada um recebe?",
+      "opcoes": [
+        "8",
+        "9",
+        "10",
+        "12"
+      ]
+    },
+    {
+      "pergunta": "Uma anotação revela que x / 3 = 7. Qual é o valor de x?",
+      "opcoes": [
+        "10",
+        "18",
+        "21",
+        "24"
+      ]
+    },
+    {
+      "pergunta": "Em uma sequência, cada número é o dobro do anterior: 2, 4, 8, __. Qual número completa a sequência?",
+      "opcoes": [
+        "10",
+        "12",
+        "14",
+        "16"
+      ]
+    }
+  ]
+}

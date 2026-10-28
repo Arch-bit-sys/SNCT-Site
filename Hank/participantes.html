@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Define a codificação de caracteres para suportar acentos e caracteres especiais. -->
+    <meta charset="UTF-8">
+
+    <!-- Faz a página se adaptar à largura da tela do dispositivo. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Define o título exibido na aba do navegador. -->
+    <title>Participantes</title>
+
+    <!-- Importa o arquivo CSS responsável pela aparência da página. -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Título principal da página de consulta dos participantes. -->
+    <h1>Participantes</h1>
+
+    <!--
+        Botão que inicia a consulta dos jogadores.
+        O JavaScript utiliza o ID "carregar" para detectar o clique
+        e solicitar os dados à API.
+    -->
+    <button id="carregar">Carregar jogadores</button>
+
+    <!--
+        Exibe mensagens para o usuário, como carregamento,
+        sucesso ou falha na consulta.
+        O conteúdo pode ser alterado pelo JavaScript.
+    -->
+    <p id="status">Clique no botão para consultar a API.</p>
+
+    <!--
+        Tabela que organiza os dados recebidos da API.
+        Cada coluna representa uma informação de um participante.
+    -->
+    <table>
+        <!-- Cabeçalho: identifica o significado de cada coluna. -->
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Gabarito</th>
+                <th>Respostas</th>
+                <th>Tempo</th>
+                <th>Acertos</th>
+                <th>Nota</th>
+            </tr>
+        </thead>
+
+        <!--
+            Corpo da tabela.
+            Começa vazio porque o JavaScript preencherá esta área
+            com uma linha (<tr>) para cada jogador consultado.
+        -->
+        <tbody id="jogadores"></tbody>
+    </table>
+
+    <!--
+        Carrega o JavaScript que controla a consulta à API
+        e a criação das linhas da tabela.
+        Como está no final do body, os elementos HTML já foram
+        interpretados quando o script é executado.
+    -->
+    <script src="script.js"></script>
+</body>
+</html>
