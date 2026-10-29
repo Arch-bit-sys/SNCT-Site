@@ -1,7 +1,23 @@
+/**
+ * Front-end do sistema de provas.
+ *
+ * Fluxo:
+ *   1. Carrega `perguntas.json` e popula o <select> de provas.
+ *   2. Valida o nome contra `/Search/JogadorExiste`.
+ *   3. Inicia um COUNTDOWN de 10 minutos + cronômetro visível.
+ *   4. Usuário escolhe a prova e responde; cada "Prosseguir" salva em `respostas[]`.
+ *   5. Ao finalizar (manualmente OU por tempo esgotado), `enviarProva()` faz POST.
+ *
+ * Modelo enviado à API:
+ *   { nome: string, tipoGabarito: string, respostas: string[], tempo: number }
+ */
+
 const API_URL = "https://snct-site.onrender.com";
 
+/** Duração máxima da prova em milissegundos (10 minutos). */
+const TEMPO_LIMITE_MS = 10 * 60 * 1000;
 
-// Elementos da página
+// Referências ao DOM
 const nomeForm = document.querySelector("#nome-form");
 const nomeInput = document.querySelector("#nome");
 const continuarButton = document.querySelector("#continuar");
@@ -12,23 +28,121 @@ const prosseguirButton = document.querySelector("#prosseguir");
 const conclusao = document.querySelector("#conclusao");
 const resultadoFinal = document.querySelector("#resultado-final");
 const statusTexto = document.querySelector("#status");
+const cronometro = document.querySelector("#cronometro");
 
-// Estado do jogo
+// ---------------------------------------------------------------------------
+// Estado da aplicação
+// ---------------------------------------------------------------------------
+
 let nomeJogador = "";
 let bancoDePerguntas = {};
 let tipoAtual = "";
 let questoesAtuais = [];
 let indiceQuestao = 0;
 let respostas = [];
+
+/** Timestamp (`performance.now()`) do início da prova. */
 let inicioProva = 0;
+
+/** Timestamp futuro em que o tempo acaba (`inicioProva + TEMPO_LIMITE_MS`). */
+let tempoFinalMs = 0;
+
+/** Handle do `setInterval` (null quando o cronômetro está parado). */
+let cronometroIntervalo = null;
+
+/** true quando o tempo acabou (bloqueia avanço; botão vira "Tentar enviar"). */
+let tempoEsgotado = false;
+
+/** true enquanto um envio está em andamento (evita envio duplo). */
+let enviando = false;
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 function mostrarStatus(mensagem, tipo = "info") {
   statusTexto.textContent = mensagem;
   statusTexto.className = tipo;
 }
 
-// Carrega perguntas.json: cada chave é o tipo da prova e seu valor é
-// um array com as questões dessa prova.
+/**
+ * Formata milissegundos em "MM:SS" (sempre positivo, arredonda para baixo).
+ */
+function formatarTempo(ms) {
+  const totalSegundos = Math.max(0, Math.floor(ms / 1000));
+  const minutos = Math.floor(totalSegundos / 60).toString().padStart(2, "0");
+  const segundos = (totalSegundos % 60).toString().padStart(2, "0");
+  return `${minutos}:${segundos}`;
+}
+
+/**
+ * Inicia o countdown de 10 minutos.
+ * Atualiza o display a cada segundo e, quando zera, dispara o envio automático.
+ */
+function iniciarCronometro() {
+  pararCronometro();
+  tempoEsgotado = false;
+  cronometro.hidden = false;
+  cronometro.classList.remove("alerta", "esgotado");
+  tempoFinalMs = inicioProva + TEMPO_LIMITE_MS;
+
+  const atualizar = () => {
+    const restante = tempoFinalMs - performance.now();
+
+    if (restante <= 0) {
+      // Tempo esgotado: congela o display e dispara o envio.
+      cronometro.textContent = "00:00";
+      cronometro.classList.remove("alerta");
+      cronometro.classList.add("esgotado");
+      pararCronometro();
+      tempoEsgotado = true;
+      dispararEnvioPorTempo();
+      return;
+    }
+
+    cronometro.textContent = formatarTempo(restante);
+
+    // Último minuto: ativa estado visual de alerta.
+    if (restante <= 60_000) {
+      cronometro.classList.add("alerta");
+    } else {
+      cronometro.classList.remove("alerta");
+    }
+  };
+
+  atualizar(); // mostra o valor imediato (sem esperar 1s)
+  cronometroIntervalo = setInterval(atualizar, 1000);
+}
+
+/**
+ * Para o `setInterval` do cronômetro (não esconde o display).
+ */
+function pararCronometro() {
+  if (cronometroIntervalo !== null) {
+    clearInterval(cronometroIntervalo);
+    cronometroIntervalo = null;
+  }
+}
+
+/**
+ * Chamado quando o tempo zera: bloqueia avanço e tenta enviar.
+ * Se o usuário ainda não escolheu a prova, envia mesmo assim
+ * (respostas vazias — a API decide o que fazer).
+ */
+async function dispararEnvioPorTempo() {
+  prosseguirButton.disabled = true;
+  prosseguirButton.textContent = "Tempo esgotado";
+
+  if (enviando) return; // já há um envio em andamento
+
+  mostrarStatus("Tempo esgotado! Enviando suas respostas...", "error");
+  await enviarProva();
+}
+
+// ---------------------------------------------------------------------------
+// Carregamento inicial
+// ---------------------------------------------------------------------------
+
 async function carregarPerguntas() {
   const resposta = await fetch("./perguntas.json");
 
@@ -54,7 +168,10 @@ async function carregarPerguntas() {
   }
 }
 
-// Valida o nome sem permitir o envio padrão do formulário.
+// ---------------------------------------------------------------------------
+// Etapa 1: validação do nome
+// ---------------------------------------------------------------------------
+
 nomeForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -87,10 +204,12 @@ nomeForm.addEventListener("submit", async (event) => {
       return;
     }
 
+    // Tudo certo: transita para a etapa da prova e inicia o countdown.
     nomeJogador = nome;
     nomeForm.hidden = true;
     etapaProva.hidden = false;
     inicioProva = performance.now();
+    iniciarCronometro();
     mostrarStatus("Nome validado. Escolha uma prova.");
   } catch (erro) {
     console.error(erro);
@@ -100,8 +219,17 @@ nomeForm.addEventListener("submit", async (event) => {
   }
 });
 
-// Seleciona a prova e prepara a primeira questão.
+// ---------------------------------------------------------------------------
+// Etapa 2: escolha da prova
+// ---------------------------------------------------------------------------
+
 tipoProvaSelect.addEventListener("change", () => {
+  // Se o tempo esgotou, não permite trocar de prova.
+  if (tempoEsgotado) {
+    tipoProvaSelect.value = tipoAtual;
+    return;
+  }
+
   tipoAtual = tipoProvaSelect.value;
   indiceQuestao = 0;
   respostas = [];
@@ -117,7 +245,10 @@ tipoProvaSelect.addEventListener("change", () => {
   mostrarQuestao();
 });
 
-// Mostra apenas a questão atual.
+// ---------------------------------------------------------------------------
+// Etapa 3: renderização da questão atual
+// ---------------------------------------------------------------------------
+
 function mostrarQuestao() {
   perguntaArea.replaceChildren();
 
@@ -133,58 +264,55 @@ function mostrarQuestao() {
   legenda.textContent = questao.pergunta ?? questao.enunciado ?? questao.questao ?? `Questão ${indiceQuestao + 1}`;
   fieldset.appendChild(legenda);
 
-  const alternativas = questao.alternativas ?? questao.opcoes ?? questao.opções ?? questao.respostas;
+  const label = document.createElement("label");
+  label.className = "alternativa";
 
-  if (!Array.isArray(alternativas) || alternativas.length === 0) {
-    mostrarStatus(
-      `A questão ${indiceQuestao + 1} não tem um array de alternativas reconhecido.`,
-      "error"
-    );
-    prosseguirButton.disabled = true;
-    return;
+  const input = document.createElement("input");
+  input.type = "text";
+  input.name = "resposta";
+  input.autocomplete = "off";
+  input.placeholder = "Digite sua resposta";
+
+  if (typeof respostas[indiceQuestao] === "string") {
+    input.value = respostas[indiceQuestao];
   }
 
-  alternativas.forEach((alternativa, indice) => {
-    const label = document.createElement("label");
-    label.className = "alternativa";
-
-    const radio = document.createElement("input");
-    radio.type = "radio";
-    radio.name = "resposta";
-    radio.value = String(indice);
-    radio.required = true;
-
-    if (respostas[indiceQuestao] === String(indice)) {
-      radio.checked = true;
-    }
-
-    const texto = document.createElement("span");
-    texto.textContent = typeof alternativa === "object"
-      ? (alternativa.texto ?? alternativa.text ?? alternativa.alternativa ?? JSON.stringify(alternativa))
-      : String(alternativa);
-
-    label.append(radio, texto);
-    fieldset.appendChild(label);
-  });
+  label.appendChild(input);
+  fieldset.appendChild(label);
 
   perguntaArea.appendChild(fieldset);
+
   prosseguirButton.textContent =
     indiceQuestao === questoesAtuais.length - 1 ? "Finalizar prova" : "Prosseguir";
-  prosseguirButton.disabled = false;
+  prosseguirButton.disabled = tempoEsgotado;
   mostrarStatus(`Questão ${indiceQuestao + 1} de ${questoesAtuais.length}.`);
 }
 
-// Este botão é type=button e não envia nenhum formulário.
+// ---------------------------------------------------------------------------
+// Etapa 4: avanço e envio
+// ---------------------------------------------------------------------------
+
 prosseguirButton.addEventListener("click", async (event) => {
   event.preventDefault();
 
-  const selecionada = perguntaArea.querySelector('input[name="resposta"]:checked');
-  if (!selecionada) {
-    mostrarStatus("Selecione uma resposta para continuar.", "error");
+  // Se o tempo esgotou, o botão só serve para retry de envio.
+  if (tempoEsgotado) {
+    if (enviando) return;
+    prosseguirButton.disabled = true;
+    mostrarStatus("Tentando enviar novamente...", "info");
+    await enviarProva();
     return;
   }
 
-  respostas[indiceQuestao] = selecionada.value;
+  const campo = perguntaArea.querySelector('input[name="resposta"]');
+  const valor = campo ? campo.value.trim() : "";
+  if (!valor) {
+    mostrarStatus("Digite uma resposta para continuar.", "error");
+    if (campo) campo.focus();
+    return;
+  }
+
+  respostas[indiceQuestao] = valor;
 
   if (indiceQuestao < questoesAtuais.length - 1) {
     indiceQuestao += 1;
@@ -195,12 +323,17 @@ prosseguirButton.addEventListener("click", async (event) => {
   await enviarProva();
 });
 
-// Envia o resultado apenas depois da última questão.
 async function enviarProva() {
+  if (enviando) return;
+  enviando = true;
+
   prosseguirButton.disabled = true;
   mostrarStatus("Enviando respostas...");
 
-  const tempo = Math.max(0, Math.round((performance.now() - inicioProva) / 60000));
+  // Tempo efetivo: entre 0 e 10 minutos (auto-envio pode estourar levemente).
+  const tempoDecorridoMs = performance.now() - inicioProva;
+  const tempo = Math.min(10, Math.max(0, Math.round(tempoDecorridoMs / 60000)));
+
   const dados = {
     nome: nomeJogador,
     tipoGabarito: tipoAtual,
@@ -221,6 +354,8 @@ async function enviarProva() {
       throw new Error(resultado.mensagem ?? resultado.erro ?? `Erro HTTP ${resposta.status}.`);
     }
 
+    pararCronometro();
+    cronometro.hidden = true;
     etapaProva.hidden = true;
     conclusao.hidden = false;
     resultadoFinal.textContent =
@@ -229,11 +364,25 @@ async function enviarProva() {
   } catch (erro) {
     console.error(erro);
     mostrarStatus(`Não foi possível enviar a prova: ${erro.message}`, "error");
+    enviando = false;
+
+    // Em caso de falha, permite retry clicando no botão.
     prosseguirButton.disabled = false;
+
+    if (tempoEsgotado) {
+      prosseguirButton.textContent = "Tentar enviar novamente";
+    }
+  } finally {
+    // Se chegou aqui com sucesso, o botão já está desabilitado pela tela de conclusão.
+    // Se foi erro, `enviando` foi resetado no catch acima.
+    if (etapaProva.hidden) enviando = false;
   }
 }
 
-// Inicialização
+// ---------------------------------------------------------------------------
+// Bootstrap
+// ---------------------------------------------------------------------------
+
 (async function iniciar() {
   prosseguirButton.disabled = true;
 

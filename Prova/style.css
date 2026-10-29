@@ -1,92 +1,547 @@
-* {
+/* ==========================================================================
+   1. Variáveis
+   ========================================================================== */
+:root {
+  color-scheme: dark;
+  --fundo: #090b0e;
+  --painel: #111419;
+  --campo: #0b0e12;
+  --borda: #343941;
+  --texto: #d5d7dc;
+  --texto-suave: #858b95;
+  --vermelho: #a63232;
+  --vermelho-claro: #e05252;
+}
+
+/* ==========================================================================
+   1.1 Reset de box-sizing
+   Garante que `width: 100%` inclua padding e borda no cálculo.
+   Sem isso, inputs/selects/buttons estouram o container em ~30px.
+   ========================================================================== */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
+/* ==========================================================================
+   2. Base
+   ========================================================================== */
 body {
   margin: 0;
-  padding: 24px;
-  background: #0b1020;
-  color: #edf1ff;
-  font-family: system-ui, sans-serif;
+  padding: 40px 24px;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% 0%, #24272c 0%, transparent 55%),
+    linear-gradient(180deg, #0d0f12 0%, var(--fundo) 100%);
+  color: var(--texto);
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.3px;
 }
 
+/* ==========================================================================
+   3. Layout principal
+   ========================================================================== */
 .container {
+  position: relative;
   width: min(720px, 100%);
-  margin: 0 auto;
+  margin: 30px auto;
+  padding: 36px;
+  text-align: center;
+  background: linear-gradient(145deg, #15181d, #0d0f13);
+  border: 1px solid #383c43;
+  border-top: 3px solid var(--vermelho);
+  border-radius: 3px;
+  box-shadow: 0 20px 60px #00000080, inset 0 1px 0 #ffffff08;
 }
 
 h1 {
   margin-top: 0;
-}
-
-form, #etapa-prova, #conclusao {
-  display: grid;
-  gap: 14px;
-  margin-top: 24px;
-}
-
-label, legend {
-  font-weight: 600;
-}
-
-input, select, button {
-  width: 100%;
-  border: 1px solid #3b4668;
-  border-radius: 8px;
-  padding: 12px;
-  font: inherit;
-}
-
-input, select {
-  background: #11182d;
-  color: #edf1ff;
-}
-
-button {
-  border: 0;
-  background: #6474c8;
-  color: #080d20;
+  margin-bottom: 30px;
+  color: #e2e3e6;
+  font-family: "Courier New", monospace;
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
   font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px #ffffff0b;
+}
+
+h1::after {
+  content: "";
+  display: block;
+  width: 70px;
+  height: 2px;
+  margin: 18px auto 0;
+  background: var(--vermelho);
+  box-shadow: 0 0 12px #a6323260;
+}
+
+h2 {
+  color: #c6a3a3;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+
+/* ==========================================================================
+   4. Blocos de texto narrativo
+   ========================================================================== */
+.intro {
+  color: #b8bcc4;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  text-align: left;
+  margin: 0 0 14px;
+  padding: 0 4px;
+}
+
+.intro strong {
+  color: #e6c9c9;
+  font-weight: 700;
+}
+
+.intro em {
+  color: #c9a0a0;
+  font-style: italic;
+}
+
+.aviso {
+  color: var(--texto-suave);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  text-align: left;
+  margin: 0 0 8px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--vermelho);
+  background: #0a0c10;
+}
+
+.epilogo {
+  color: #b9c1b8;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  text-align: left;
+  margin: 16px 0;
+  padding: 14px 16px;
+  border-left: 2px solid #657a67;
+  background: #0a0f0b;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   5. Aviso de tempo limite (dentro de #etapa-prova)
+   ========================================================================== */
+.tempo-limite {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 8px;
+  padding: 14px 16px;
+  background: linear-gradient(90deg, #2a0e0e 0%, #1a0808 100%);
+  border: 1px solid #7a2222;
+  border-left: 4px solid var(--vermelho-claro);
+  border-radius: 2px;
+  color: #f0dada;
+  box-shadow: 0 0 20px #a6323230, inset 0 0 12px #a6323215;
+}
+
+.tempo-limite-icone {
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--vermelho-claro);
+  filter: drop-shadow(0 0 6px #a6323280);
+  flex-shrink: 0;
+}
+
+.tempo-limite-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+}
+
+.tempo-limite-texto strong {
+  font-size: 0.95rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #ff9b9b;
+}
+
+.tempo-limite-texto span {
+  font-size: 0.82rem;
+  color: #c9a0a0;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   6. Seções (form, etapa-prova, conclusão) e campos base
+   ========================================================================== */
+form,
+#etapa-prova,
+#conclusao {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 24px;
+  background: #0b0d11;
+  border: 1px solid #292d34;
+  border-radius: 2px;
+  text-align: left;
+}
+
+label,
+legend {
+  color: #c5c8ce;
+  font-size: 0.83rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+input,
+select,
+button {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--borda);
+  border-radius: 2px;
+  padding: 13px 14px;
+  font: inherit;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+input,
+select {
+  background: var(--campo);
+  color: #e1e3e7;
+}
+
+input::placeholder {
+  color: #666d77;
+  opacity: 1;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--vermelho);
+  box-shadow: 0 0 0 2px #a632321c;
+  background: #101216;
+}
+
+/* ==========================================================================
+   7. Botões
+   ========================================================================== */
+button {
+  border: 1px solid #8e2929;
+  background: #721f25;
+  color: #f2e9e9;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   cursor: pointer;
+  box-shadow: inset 0 1px 0 #ffffff0b;
+}
+
+button:hover:not(:disabled) {
+  background: #912a30;
+  border-color: var(--vermelho-claro);
+  box-shadow: 0 0 16px #a6323226;
+}
+
+button:active:not(:disabled) {
+  background: #58171c;
+  transform: translateY(1px);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--vermelho-claro);
+  outline-offset: 3px;
 }
 
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.38;
   cursor: not-allowed;
+  filter: grayscale(0.5);
 }
 
+/* ==========================================================================
+   8. Questão (fieldset + legend + input de resposta)
+   ========================================================================== */
 fieldset {
   margin: 20px 0 0;
-  padding: 16px;
-  border: 1px solid #3b4668;
-  border-radius: 8px;
+  padding: 18px;
+  background: #0d1014;
+  border: 1px solid #343941;
+  border-radius: 2px;
+}
+
+legend {
+  padding: 0 8px;
+  color: #c6a3a3;
 }
 
 .alternativa {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 12px 0;
-  font-weight: 400;
+  display: block;
+  margin: 14px 0 0;
 }
 
-.alternativa input {
-  width: auto;
-  margin-top: 5px;
+.alternativa input[type="text"] {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  background: #06080b;
+  color: #e8dcdc;
+  border: 1px solid #3a3030;
+  border-radius: 2px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
+.alternativa input[type="text"]:focus {
+  outline: none;
+  border-color: var(--vermelho-claro);
+  background: #0b0d12;
+  box-shadow: 0 0 0 2px #a6323240, inset 0 0 8px #a6323210;
+}
+
+.alternativa input[type="text"]::placeholder {
+  color: #555;
+  font-style: italic;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   9. Barra de status
+   ========================================================================== */
 #status {
   min-height: 1.5em;
+  margin: 16px 0;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  letter-spacing: 0.6px;
+  line-height: 1.6;
 }
 
 #status.error {
-  color: #ff9aa9;
+  color: #ff777f;
+  border-left: 2px solid #b8323c;
+  padding-left: 10px;
 }
 
 #status.info {
-  color: #c3ccff;
+  color: #b5bac4;
+  border-left: 2px solid #687384;
+  padding-left: 10px;
+}
+
+/* ==========================================================================
+   10. Tela de conclusão
+   ========================================================================== */
+#conclusao {
+  border-top: 2px solid #657a67;
+}
+
+#conclusao h2 {
+  color: #b9cbb8;
+  font-size: 1.25rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+#resultado-final {
+  color: #c4c8cf;
+  line-height: 1.8;
+}
+
+#conclusao a {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 12px 20px;
+  color: #f0dada;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: 1px solid #6e2a2a;
+  background: #1a0e10;
+  border-radius: 2px;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#conclusao a::before {
+  content: "▸ ";
+  color: var(--vermelho-claro);
+}
+
+#conclusao a:hover {
+  background: #2a1216;
+  border-color: var(--vermelho-claro);
+  box-shadow: 0 0 16px #a6323230;
+}
+
+/* ==========================================================================
+   11. Cronômetro (fixo, canto superior direito)
+   `right` calculado para alinhar à borda do .container em telas largas,
+   sem invadir a viewport em telas estreitas.
+   ========================================================================== */
+#cronometro {
+  position: fixed;
+  top: 16px;
+  right: max(16px, calc((100vw - 720px) / 2 + 16px));
+  z-index: 100;
+  padding: 10px 18px;
+  background: rgba(10, 12, 16, 0.94);
+  border: 1px solid var(--vermelho);
+  border-radius: 2px;
+  color: #e8dcdc;
+  font-family: "Courier New", monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 16px #a6323240, inset 0 0 12px #a6323210;
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+#cronometro::before {
+  content: "⏱";
+  margin-right: 8px;
+  color: var(--vermelho-claro);
+  font-size: 0.95rem;
+}
+
+/* Último minuto: pulso rápido, mais avermelhado */
+#cronometro.alerta {
+  border-color: var(--vermelho-claro);
+  color: #ff9999;
+  background: rgba(40, 10, 10, 0.94);
+  animation: cronometro-alerta 0.8s ease-in-out infinite;
+}
+
+#cronometro.alerta::before {
+  color: #ff5555;
+}
+
+@keyframes cronometro-alerta {
+  0%, 100% {
+    box-shadow: 0 0 16px #a6323240, inset 0 0 12px #a6323210;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 32px #e0525280, inset 0 0 20px #e0525230;
+    transform: scale(1.04);
+  }
+}
+
+/* Tempo esgotado: fundo vermelho sólido, sem animação */
+#cronometro.esgotado {
+  background: #4a0e0e;
+  color: #ff6666;
+  border-color: var(--vermelho-claro);
+  animation: none;
+  box-shadow: 0 0 24px #a6323270, inset 0 0 16px #a6323240;
+}
+
+#cronometro.esgotado::before {
+  content: "⏱";
+  color: #ff4444;
+}
+
+/* ==========================================================================
+   12. Utilidades
+   ========================================================================== */
+select {
+  cursor: pointer;
 }
 
 [hidden] {
   display: none !important;
+}
+
+/* ==========================================================================
+   13. Responsivo (mobile)
+   ========================================================================== */
+@media (max-width: 600px) {
+  body {
+    padding: 20px 14px;
+  }
+
+  .container {
+    margin: 10px auto;
+    padding: 22px 16px;
+  }
+
+  h1 {
+    letter-spacing: 2px;
+  }
+
+  form,
+  #etapa-prova,
+  #conclusao {
+    padding: 18px 14px;
+  }
+
+  input,
+  select,
+  button {
+    padding: 12px;
+  }
+
+  .alternativa input[type="text"] {
+    padding: 12px;
+  }
+
+  .intro {
+    font-size: 0.88rem;
+  }
+
+  .epilogo {
+    font-size: 0.84rem;
+  }
+
+  .tempo-limite {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .tempo-limite-icone {
+    font-size: 1.5rem;
+  }
+
+  .tempo-limite-texto strong {
+    font-size: 0.85rem;
+  }
+
+  .tempo-limite-texto span {
+    font-size: 0.76rem;
+  }
+
+  #cronometro {
+    top: 10px;
+    right: 10px;
+    padding: 8px 12px;
+    font-size: 0.92rem;
+    letter-spacing: 2px;
+  }
+}
+
+/* ==========================================================================
+   14. Acessibilidade: reduzir movimento
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+
+  #cronometro,
+  #cronometro.alerta {
+    animation: none !important;
+  }
 }

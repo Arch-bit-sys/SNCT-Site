@@ -1,60 +1,35 @@
 {
   "1": [
     {
-      "pergunta": "Uma pesquisadora organizou 24 documentos em 3 grupos iguais. Quantos documentos ficaram em cada grupo?",
-      "opcoes": [
-        "6",
-        "8",
-        "9",
-        "12"
-      ]
+      "pergunta": "Na mesa de Elza, entre pilhas de papéis revirados, você encontra um bilhete com a sequência: 2, 3, 5, 7, 11, 13, 15. Na margem, uma anotação tremida: 'Um deles não é como os outros — foi plantado para me confundir. Enquanto você procura o intruso, eu ganho tempo.' Todos os números são primos, exceto um. Qual número o vilão inseriu para despistar a investigação?"
     },
     {
-      "pergunta": "Uma pista informa que x / 4 = 5. Qual é o valor de x?",
-      "opcoes": [
-        "9",
-        "15",
-        "20",
-        "25"
-      ]
+      "pergunta": "Numa gaveta trancada da mesa de Elza há um cadeado de dois dígitos. Preso a ele, um bilhete: 'A soma dos meus dígitos é 9. Se me virarem de cabeça para baixo, fico 27 unidades menor. Só quem pensa em números encontrará o que guardo.' Você entende: essa senha abre o compartimento onde Elza escondeu as pistas dos próximos passos. Qual é a senha?"
     },
     {
-      "pergunta": "Um código é formado por 3 algarismos diferentes escolhidos entre 1, 2 e 3. Quantos códigos podem ser formados usando os três algarismos uma vez cada?",
-      "opcoes": [
-        "3",
-        "4",
-        "6",
-        "9"
-      ]
+      "pergunta": "Três colegas de Elza foram interrogados. A polícia confirmou: exatamente um deles mente, e exatamente um é o responsável pelo desaparecimento. A disse: 'B é o culpado.' B disse: 'C mente.' C disse: 'A não é o culpado.' A delegada vira para você: 'Se só um mente e só um é culpado, quem levou Elza?' Descobrir o culpado libera o acesso ao arquivo pessoal dele — onde há a próxima pista."
     }
   ],
   "2": [
     {
-      "pergunta": "Uma equipe encontrou 36 páginas de anotações e precisa dividi-las igualmente entre 4 investigadores. Quantas páginas cada um recebe?",
-      "opcoes": [
-        "8",
-        "9",
-        "10",
-        "12"
-      ]
+      "pergunta": "No laboratório de Elza, um cofre pequeno foi aberto às pressas: 3/5 de suas anotações ficaram trancadas dentro dele, e as 48 páginas restantes foram espalhadas pela gaveta. Uma etiqueta diz: 'Se chegou até aqui, calcule o total — o próximo cadeado só abre com esse número.' Você precisa do total de páginas que Elza tinha para descobrir quantas ainda faltam recuperar. Quantas páginas ela tinha no total?"
     },
     {
-      "pergunta": "Uma anotação revela que x / 3 = 7. Qual é o valor de x?",
-      "opcoes": [
-        "10",
-        "18",
-        "21",
-        "24"
-      ]
+      "pergunta": "O vilão anti-matemático deixou dois bilhetes cifrados com as senhas x e y — as duas que faltam para abrir o próximo compartimento. No primeiro: 'A soma de x e y é 15.' No segundo: 'A diferença entre x e y é 3.' Para abrir o cadeado, o mecanismo exige o produto x·y. Se você errar, o compartimento trava por uma hora — e Elza não tem uma hora. Qual é o produto?"
     },
     {
-      "pergunta": "Em uma sequência, cada número é o dobro do anterior: 2, 4, 8, __. Qual número completa a sequência?",
-      "opcoes": [
-        "10",
-        "12",
-        "14",
-        "16"
-      ]
+      "pergunta": "O cofre seguinte exige um código de 4 dígitos distintos, escolhidos entre 0 e 9, que não pode começar com 0. Ao lado, uma anotação do vilão: 'Tantas combinações, mas só uma abre. Quantas você consegue testar antes de Elza desaparecer para sempre?' Saber o número exato de possibilidades é o que permite ao perito configurar o decodificador corretamente — sem isso, o aparelho não calibra. Quantos códigos diferentes podem ser formados?"
+    }
+  ],
+  "3": [
+    {
+      "pergunta": "Na parede do esconderijo, uma progressão aritmética foi gravada a cinzel: começa em 7 e aumenta de 5 em 5. O vilão escreveu embaixo, com tinta fresca: 'A senha final é o 20º termo desta sequência. Você não chegará lá a tempo.' Cada termo é uma coordenada no mapa que leva até Elza — errar o 20º significa procurar no lugar errado. Qual é o 20º termo, que revela a senha final?"
+    },
+    {
+      "pergunta": "Uma sequência de números foi deixada pelo vilão em código: aₙ = 2n² − 3n + 1. Ao lado, uma anotação: 'O 10º termo desta sequência é o número da casa onde Elza está escondida. Você não vai conseguir calcular antes de eu terminar o que comecei.' A polícia já cercou o quarteirão, mas precisa do número exato para invadir. Qual é o valor do 10º termo?"
+    },
+    {
+      "pergunta": "O cadeado final tem como senha a soma dos quadrados das raízes do polinômio P(x) = x³ − 6x² + 11x − 6. Ao lado, o vilão deixou um último recado: 'Se você chegou até aqui, prove que sabe mais que eu. A soma dos quadrados das raízes abre o último compartimento. E Elza não tem muito tempo.' Atrás dessa porta está Elza — ou o que restou dela. Qual é a senha?"
     }
   ]
 }
