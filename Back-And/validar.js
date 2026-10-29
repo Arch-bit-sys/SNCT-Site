@@ -75,8 +75,9 @@ async function validar(jogador) {
         }
     }
 
-    // Calcula a nota pela fórmula: 30 * acertos + 10 - tempo.
-    const nota = Math.round(30 * acertos + 10 - jogador.tempo);
+    // Calcula a nota (teto 100): 100 × (acertos/3) × (1 − 0.3 × tempo/10).
+    // Sem acertos = 0; 3 acertos em 0 min = 100 (teto); 3 acertos em 10 min = 70.
+    const nota = Math.round(100 * (acertos / 3) * (1 - 0.3 * (jogador.tempo / 10)));
 
     // Retorna somente os dados definidos pelo formato do projeto.
     return {
